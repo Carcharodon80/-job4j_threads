@@ -1,4 +1,4 @@
-package thread;
+package ru.job4j.thread;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;
@@ -15,6 +15,11 @@ public class Wget implements Runnable {
         this.speed = speed;
     }
 
+    /**
+     * метод читает файл из сети и пишет его в "out.txt"
+     * размер буффера == скорость скачивания за секунду,
+     * если буфер скачался/записался быстрее, чем за секунду - делаем задержку
+     */
     @Override
     public void run() {
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
@@ -26,11 +31,8 @@ public class Wget implements Runnable {
                 out.write(array, 0, bytesRead);
                 Instant end = Instant.now();
                 long time = Duration.between(start, end).toMillis();
-                System.out.println(time);
                 if (time < 1000) {
-                    System.out.println("Pause = " + (1000 - time));
                     Thread.sleep(1000 - time);
-
                 }
                 start = Instant.now();
             }
@@ -40,9 +42,13 @@ public class Wget implements Runnable {
 
     }
 
+    /**
+     * @param args - 1 аргумент - URL скачиваемого файла,
+     *             2 аргумент - максимальное кол-во байт, которое можно скачать за 1 секунду
+     */
     public static void main(String[] args) throws InterruptedException {
-        String url = "https://raw.githubusercontent.com/peterarsentev/course_test/master/pom.xml";
-        int speed = 1024;
+        String url = args[0];
+        int speed = Integer.parseInt(args[1]);
         Thread wget = new Thread(new Wget(url, speed));
         wget.start();
         wget.join();
