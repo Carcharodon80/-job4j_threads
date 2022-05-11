@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @ThreadSafe
 public class UserCache {
-    private final ConcurrentHashMap<Integer, User> users = new ConcurrentHashMap<Integer, User>();
+    private final ConcurrentHashMap<Integer, User> users = new ConcurrentHashMap<>();
     private final AtomicInteger id = new AtomicInteger();
 
     public void add(User user) {
