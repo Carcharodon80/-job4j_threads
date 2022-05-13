@@ -13,10 +13,12 @@ public final class WriteFile {
     /**
      * пишет строку в файл
      */
-    public synchronized void saveContent(final String content) throws IOException {
+    public synchronized void saveContent(final String content) {
         try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
             byte[] buffer = content.getBytes(StandardCharsets.UTF_8);
             out.write(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
