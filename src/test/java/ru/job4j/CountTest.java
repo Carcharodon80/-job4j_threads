@@ -2,7 +2,6 @@ package ru.job4j;
 
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 public class CountTest {
@@ -28,7 +27,6 @@ public class CountTest {
         second.start();
         first.join();
         second.join();
-        assertThat(count.get(), is(2));
+        assertEquals(count.get(), 2);
     }
-
 }
