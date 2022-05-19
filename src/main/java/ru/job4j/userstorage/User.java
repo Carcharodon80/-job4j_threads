@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public final class User {
     private final int id;
-    private volatile int amount;
+    private int amount;
 
     public User(int id, int amount) {
         this.id = id;
