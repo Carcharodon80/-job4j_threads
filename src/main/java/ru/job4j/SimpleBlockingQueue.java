@@ -22,14 +22,10 @@ public class SimpleBlockingQueue<T> {
      * проверяет очередь, если заполнена - в спячку,
      * если нет - добавить в очередь и оповестить 1 другую нить
      */
-    public synchronized void offer(T value) {
+    public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == maxSize) {
-            try {
-                System.out.println("Очередь заполнена, не могу добавить. Ждем.");
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            System.out.println("Очередь заполнена, не могу добавить. Ждем.");
+            this.wait();
         }
         queue.offer(value);
         System.out.println("Добавлен в очередь: " + value);
@@ -40,16 +36,12 @@ public class SimpleBlockingQueue<T> {
      * проверяет очередь, если заполнена - в спячку,
      * если нет - взять из очереди и оповестить 1 другую нить
      */
-    public synchronized T poll() {
+    public synchronized T poll() throws InterruptedException {
         T rsl;
         while (queue.size() == 0) {
-            try {
-                System.out.println("Очередь пуста, не могу получить. Ждем.");
+            System.out.println("Очередь пуста, не могу получить. Ждем.");
 
-                this.wait();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            this.wait();
         }
         rsl = queue.poll();
         System.out.println("Удален из очереди: " + rsl);
@@ -66,8 +58,8 @@ public class SimpleBlockingQueue<T> {
         Thread producer = new Thread(
                 () -> {
                     for (int i = 0; i < 100; i++) {
-                        queue.offer(i);
                         try {
+                            queue.offer(i);
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -78,8 +70,8 @@ public class SimpleBlockingQueue<T> {
         Thread consumer = new Thread(
                 () -> {
                     for (int i = 0; i < 100; i++) {
-                        queue.poll();
                         try {
+                            queue.poll();
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
