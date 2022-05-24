@@ -24,11 +24,9 @@ public class SimpleBlockingQueue<T> {
      */
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() == maxSize) {
-            System.out.println("Очередь заполнена, не могу добавить. Ждем.");
             this.wait();
         }
         queue.offer(value);
-        System.out.println("Добавлен в очередь: " + value);
         this.notify();
     }
 
@@ -39,53 +37,14 @@ public class SimpleBlockingQueue<T> {
     public synchronized T poll() throws InterruptedException {
         T rsl;
         while (queue.size() == 0) {
-            System.out.println("Очередь пуста, не могу получить. Ждем.");
-
             this.wait();
         }
         rsl = queue.poll();
-        System.out.println("Удален из очереди: " + rsl);
         this.notify();
         return rsl;
     }
 
     public synchronized boolean isEmpty() {
         return queue.size() == 0;
-    }
-
-    public static void main(String[] args) {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(5);
-        Thread producer = new Thread(
-                () -> {
-                    for (int i = 0; i < 100; i++) {
-                        try {
-                            queue.offer(i);
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-        );
-        Thread consumer = new Thread(
-                () -> {
-                    for (int i = 0; i < 100; i++) {
-                        try {
-                            queue.poll();
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                }
-        );
-        producer.start();
-        consumer.start();
-        try {
-            producer.join();
-            consumer.join();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
     }
 }
