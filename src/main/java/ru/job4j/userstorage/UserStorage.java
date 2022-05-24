@@ -10,43 +10,27 @@ public final class UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
 
     public synchronized boolean add(User user) {
-        boolean rsl = false;
-        if (!users.containsKey(user.getId())) {
-            users.put(user.getId(), user);
-            rsl = true;
-        }
-        return rsl;
+        return users.putIfAbsent(user.getId(), user) != null;
     }
 
     public synchronized boolean update(User user) {
-        boolean rsl = false;
-        if (users.containsKey(user.getId())) {
-            users.remove(user.getId());
-            users.put(user.getId(), user);
-            rsl = true;
-        }
-        return rsl;
+        return users.replace(user.getId(), user) != null;
     }
 
     public synchronized boolean delete(User user) {
-        boolean rsl = false;
-        if (users.containsKey(user.getId())) {
-            users.remove(user.getId());
-            rsl = true;
-        }
-        return rsl;
+        return users.remove(user.getId(), user);
     }
 
     public synchronized boolean transfer(int fromId, int toId, int amount) {
         boolean rsl = false;
         User fromUser = users.get(fromId);
         User toUser = users.get(toId);
-        if (fromUser != null && toUser != null) {
+        if (fromUser != null && toUser != null && fromUser.getAmount() >= amount) {
             fromUser.setAmount(fromUser.getAmount() - amount);
             toUser.setAmount(toUser.getAmount() + amount);
-            update(fromUser);
-            update(toUser);
             rsl = true;
+        } else {
+            System.out.println("Недостаточно денег на счете");
         }
         return rsl;
     }
