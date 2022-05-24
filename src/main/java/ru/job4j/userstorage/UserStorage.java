@@ -10,7 +10,7 @@ public final class UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
 
     public synchronized boolean add(User user) {
-        return users.putIfAbsent(user.getId(), user) != null;
+        return users.putIfAbsent(user.getId(), user) == null;
     }
 
     public synchronized boolean update(User user) {
@@ -29,8 +29,6 @@ public final class UserStorage {
             fromUser.setAmount(fromUser.getAmount() - amount);
             toUser.setAmount(toUser.getAmount() + amount);
             rsl = true;
-        } else {
-            System.out.println("Недостаточно денег на счете");
         }
         return rsl;
     }
