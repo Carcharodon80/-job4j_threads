@@ -31,7 +31,7 @@ public class SimpleBlockingQueue<T> {
     }
 
     /**
-     * проверяет очередь, если заполнена - в спячку,
+     * проверяет очередь, если пустая - в спячку,
      * если нет - взять из очереди и оповестить 1 другую нить
      */
     public synchronized T poll() throws InterruptedException {
