@@ -1,7 +1,7 @@
 package ru.job4j;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 public class StackTest {
@@ -12,16 +12,16 @@ public class StackTest {
         stack.push(1);
         stack.push(2);
         stack.push(3);
-        assertThat(stack.poll(), is(3));
-        assertThat(stack.poll(), is(2));
-        assertThat(stack.poll(), is(1));
+        assertEquals(3, (int) stack.poll());
+        assertEquals(2, (int) stack.poll());
+        assertEquals(1, (int) stack.poll());
     }
 
     @Test
     public void when1PushThen1Poll() {
         Stack<Integer> stack = new Stack<>();
         stack.push(1);
-        assertThat(stack.poll(), is(1));
+        assertEquals(1, (int) stack.poll());
     }
 
     @Test
@@ -29,7 +29,7 @@ public class StackTest {
         Stack<Integer> stack = new Stack<>();
         stack.push(1);
         stack.push(2);
-        assertThat(stack.poll(), is(2));
-        assertThat(stack.poll(), is(1));
+        assertEquals(2, (int) stack.poll());
+        assertEquals(1, (int) stack.poll());
     }
 }
