@@ -8,7 +8,8 @@ import java.util.List;
 
 public class ThreadPool {
     private final List<Thread> threads = new LinkedList<>();
-    private final SimpleBlockingQueue<Runnable> tasks = new SimpleBlockingQueue<>(10);
+    private final SimpleBlockingQueue<Runnable> tasks =
+            new SimpleBlockingQueue<>(Runtime.getRuntime().availableProcessors());
 
     /**
      * создает список нитей (размер - кол-во ядер),
@@ -37,12 +38,8 @@ public class ThreadPool {
     /**
      * добавляет задачи в tasks (а оттуда их постоянно забирают в работу нити из threads)
      */
-    public synchronized void work(Runnable job) {
-        try {
+    public synchronized void work(Runnable job) throws InterruptedException {
             tasks.offer(job);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -58,7 +55,7 @@ public class ThreadPool {
      * пример работы (для себя)
      * ! - pool.shutdown - экстренная остановка (к этому времени некоторые задачи еще в очереди)
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ThreadPool pool = new ThreadPool();
         for (int i = 0; i < 100; i++) {
             int finalI = i;
