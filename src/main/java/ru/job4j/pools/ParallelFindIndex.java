@@ -23,14 +23,13 @@ public class  ParallelFindIndex<K> extends RecursiveTask<Integer> {
      * Разбивает поиск по массиву на много маленьких поисков
      * (сам массив не разбивается, задается только интервал поиска),
      * если интервал поиска <= 10 - происходит последовательный поиск в simpleFindIndex,
-     * затем результаты этих маленьких поисков (где ничего не нашлось - возвращает 0) складываются.
-     * Если итоговый резальтат = 0, значит или ничего не нашлось, или индекс нужного элемента = 0,
-     * это проверяется в simpleFindIndex.
+     * Каждый этот маленький поиск возвращает или -1 (элемент не найден), или индекс найденного элемента,
+     * из этих значений берется максимальное (-1 - если элемент нигде не найден)
      */
     @Override
     protected Integer compute() {
         if (to - from <= 10) {
-            return simpleFindIndex(array, element, from, to);
+            return simpleFindIndex();
         }
         int mid = (from + to) / 2;
         ParallelFindIndex<K> leftFind = new ParallelFindIndex<>(array, element, from, mid);
@@ -39,15 +38,15 @@ public class  ParallelFindIndex<K> extends RecursiveTask<Integer> {
         rightFind.fork();
         int left = leftFind.join();
         int right = rightFind.join();
-        return left + right;
+        return Math.max(left, right);
     }
 
     /**
      * последовательный поиск на заданном участке массива
-     * возвращает номер индекса (индекс может быть 0) или 0, если индекс не найден
+     * возвращает номер индекса или -1, если индекс не найден
      */
-    private int simpleFindIndex(K[] array, K element, int from, int to) {
-        int index = 0;
+    private int simpleFindIndex() {
+        int index = -1;
         for (int i = from; i <= to; i++) {
             if (array[i].equals(element)) {
                 index = i;
@@ -58,15 +57,11 @@ public class  ParallelFindIndex<K> extends RecursiveTask<Integer> {
     }
 
     /**
-     * Возвращает индекс найденого элемента (корректная работа - только если элементы уникальны!)
+     * Возвращает индекс найденого элемента
      * Если элемент не найден - возвращает -1
      */
     public int findIndex(K[] array, K element) {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
-        int index = forkJoinPool.invoke(new ParallelFindIndex<>(array, element, 0, array.length - 1));
-        if (index == 0 && !array[0].equals(element)) {
-            index = -1;
-        }
-        return index;
+        return forkJoinPool.invoke(new ParallelFindIndex<>(array, element, 0, array.length - 1));
     }
 }

@@ -32,4 +32,16 @@ public class ParallelFindIndexTest {
         ParallelFindIndex<String> task = new ParallelFindIndex<>();
         assertEquals(-1, task.findIndex(array, "150"));
     }
+
+    @Test
+    public void whenFindTwoElementsGetMaxIndex() {
+        String[] array = new String[500];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = "No " + i;
+        }
+        array[400] = "No 300";
+        ParallelFindIndex<String> task = new ParallelFindIndex<>();
+        assertEquals(400, task.findIndex(array, "No 300"));
+    }
+
 }
